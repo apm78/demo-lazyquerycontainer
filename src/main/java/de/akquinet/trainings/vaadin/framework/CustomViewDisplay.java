@@ -1,7 +1,7 @@
 package de.akquinet.trainings.vaadin.framework;
 
-import com.vaadin.navigator.*;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.SingleComponentContainer;
 
@@ -20,10 +20,14 @@ public class CustomViewDisplay implements ViewDisplay
     @Override
     public void showView(final View view)
     {
-        if (view instanceof de.akquinet.trainings.vaadin.framework.View) {
-            contentNode.setContent(((de.akquinet.trainings.vaadin.framework.View) view)
-                    .getComponent(Component.class));
-        } else {
+        if (view instanceof de.akquinet.trainings.vaadin.framework.View)
+        {
+            final Component newContent = ((de.akquinet.trainings.vaadin.framework.View) view)
+                    .getComponent(Component.class);
+            contentNode.setContent(newContent);
+        }
+        else
+        {
             throw new IllegalArgumentException("View is not a de.akquinet.trainings.vaadin.framework.View): "
                     + view);
         }

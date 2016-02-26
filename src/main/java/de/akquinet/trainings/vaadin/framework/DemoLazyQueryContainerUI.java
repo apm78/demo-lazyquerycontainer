@@ -11,6 +11,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
+import de.akquinet.trainings.vaadin.framework.views.data.DataPresenterImpl;
 import de.akquinet.trainings.vaadin.framework.views.data.DataViewImpl;
 import de.akquinet.trainings.vaadin.framework.views.home.HomeViewImpl;
 
@@ -41,7 +42,7 @@ public class DemoLazyQueryContainerUI extends UI
 
         setNavigator(new Navigator(this, new CustomViewDisplay(contentPanel)));
         getNavigator().addView(HomeViewImpl.VIEW_NAME, new HomeViewImpl());
-        getNavigator().addView(DataViewImpl.VIEW_NAME, new DataViewImpl());
+        getNavigator().addView(DataViewImpl.VIEW_NAME, new DataViewImpl(new DataPresenterImpl()));
 
         final VerticalLayout navigationLayout = new VerticalLayout();
         final Button homeButton = new Button("Home", e -> getNavigator().navigateTo(HomeViewImpl.VIEW_NAME));

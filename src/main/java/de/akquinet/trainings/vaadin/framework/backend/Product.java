@@ -1,4 +1,4 @@
-package de.akquinet.trainings.vaadin.framework.views.data;
+package de.akquinet.trainings.vaadin.framework.backend;
 
 /**
  * @author Axel Meier, akquinet engineering GmbH

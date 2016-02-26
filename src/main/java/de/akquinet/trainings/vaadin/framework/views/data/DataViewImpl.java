@@ -6,6 +6,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import de.akquinet.trainings.vaadin.framework.backend.Product;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
 import org.vaadin.addons.lazyquerycontainer.Query;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
@@ -27,11 +28,23 @@ public class DataViewImpl implements DataView, View, QueryFactory
     public final static int BATCH_SIZE = 50;
 
     private final VerticalLayout rootLayout = new VerticalLayout();
-    private ProductProvider dataProvider;
+    private final ProductProvider productProvider;
 
-    public DataViewImpl()
+    public DataViewImpl(final ProductProvider productProvider)
     {
-        init();
+        final Table table = new Table("Product List");
+        final LazyQueryContainer container = new LazyQueryContainer(this, PROP_ID, BATCH_SIZE, false);
+        container.addContainerProperty(PROP_ID, Long.class, 0L, true, true);
+        container.addContainerProperty(PROP_NAME, String.class, "", true, true);
+        container.addContainerProperty(PROP_MODEL_NUMBER, String.class, "", true, true);
+        table.setContainerDataSource(container);
+        table.setColumnHeader(PROP_ID, "ID");
+        table.setColumnHeader(PROP_NAME, "Product Name");
+        table.setColumnHeader(PROP_MODEL_NUMBER, "Model Number");
+        table.setSizeFull();
+        rootLayout.addComponent(table);
+
+        this.productProvider = productProvider;
     }
 
 
@@ -39,20 +52,6 @@ public class DataViewImpl implements DataView, View, QueryFactory
     public <C> C getComponent(final Class<C> type)
     {
         return type.cast(rootLayout);
-    }
-
-    private void init()
-    {
-        final Table table = new Table("Data to show");
-        final LazyQueryContainer container = new LazyQueryContainer(this, PROP_ID, BATCH_SIZE, false);
-        container.addContainerProperty(PROP_ID, Long.class, 0L, true, true);
-        container.addContainerProperty(PROP_NAME, String.class, "", true, true);
-        container.addContainerProperty(PROP_MODEL_NUMBER, String.class, "", true, true);
-        table.setContainerDataSource(container);
-        table.setSizeFull();
-        rootLayout.addComponent(table);
-
-        setProductProvider(new DataPresenterImpl());
     }
 
     @Override
@@ -67,24 +66,18 @@ public class DataViewImpl implements DataView, View, QueryFactory
         return new QueryImpl();
     }
 
-    @Override
-    public void setProductProvider(final ProductProvider dataProvider)
-    {
-        this.dataProvider = dataProvider;
-    }
-
     private class QueryImpl implements Query
     {
         @Override
         public int size()
         {
-            return dataProvider.size();
+            return productProvider.size();
         }
 
         @Override
         public List<Item> loadItems(int startIndex, int count)
         {
-            final List<Product> productList = dataProvider.loadItems(startIndex, count);
+            final List<Product> productList = productProvider.loadItems(startIndex, count);
             final List<Item> resList = new ArrayList<>(productList.size());
             for (Product product : productList) {
                 resList.add(obtainItemFromBean(product));

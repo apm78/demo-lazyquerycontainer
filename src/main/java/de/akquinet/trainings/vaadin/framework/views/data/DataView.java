@@ -7,5 +7,4 @@ import de.akquinet.trainings.vaadin.framework.View;
  */
 public interface DataView extends View
 {
-    void setProductProvider(ProductProvider dataProvider);
 }
