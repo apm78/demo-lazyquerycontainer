@@ -21,5 +21,6 @@ public interface DataProvider<T>
      * @param count      Count of the items to be retrieved.
      * @return List of items.
      */
-    List<T> loadItems(int startIndex, int count);
+    List<T> loadItems(int startIndex, int count,
+                      String sortBy, boolean ascending);
 }

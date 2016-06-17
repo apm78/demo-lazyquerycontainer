@@ -16,7 +16,10 @@ public class HomeViewImpl implements HomeView, View
 
     public HomeViewImpl()
     {
-        rootLayout.addComponent(new Label("Hello World!"));
+        rootLayout.setMargin(true);
+        rootLayout.addComponent(
+                new Label(
+                        "In this demo a LazyQueryContainer is used with a Grid component."));
     }
 
     @Override

@@ -14,7 +14,8 @@ public class DataPresenterImpl implements DataPresenter, ProductProvider
     private final ProductDao productDao = new ProductDaoImpl();
 
     @Override
-    public List<Product> loadItems(final int startIndex, final int count)
+    public List<Product> loadItems(final int startIndex, final int count,
+                                   final String sortBy, final boolean ascending)
     {
         if (startIndex < 0 || startIndex >= size())
         {
@@ -25,7 +26,7 @@ public class DataPresenterImpl implements DataPresenter, ProductProvider
             throw new IllegalArgumentException("Invalid count: " + count);
         }
 
-        return productDao.getProducts(startIndex, count);
+        return productDao.getProducts(startIndex, count, sortBy, ascending);
     }
 
     @Override

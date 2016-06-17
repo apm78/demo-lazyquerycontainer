@@ -4,7 +4,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.ui.Table;
+import com.vaadin.shared.ui.grid.HeightMode;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.VerticalLayout;
 import de.akquinet.trainings.vaadin.framework.backend.Product;
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer;
@@ -22,27 +23,30 @@ public class DataViewImpl implements DataView, View, QueryFactory
 {
     public final static String VIEW_NAME = "data";
 
-    public final static String PROP_ID = "id";
-    public final static String PROP_NAME = "name";
-    public final static String PROP_MODEL_NUMBER = "modelNumber";
-    public final static int BATCH_SIZE = 50;
+    private final static String PROP_ID = "id";
+    private final static String PROP_NAME = "name";
+    private final static String PROP_MODEL_NUMBER = "modelNumber";
+    private final static int BATCH_SIZE = 50;
 
     private final VerticalLayout rootLayout = new VerticalLayout();
     private final ProductProvider productProvider;
 
     public DataViewImpl(final ProductProvider productProvider)
     {
-        final Table table = new Table("Product List");
+        final Grid grid = new Grid("Product List");
         final LazyQueryContainer container = new LazyQueryContainer(this, PROP_ID, BATCH_SIZE, false);
         container.addContainerProperty(PROP_ID, Long.class, 0L, true, true);
-        container.addContainerProperty(PROP_NAME, String.class, "", true, true);
-        container.addContainerProperty(PROP_MODEL_NUMBER, String.class, "", true, true);
-        table.setContainerDataSource(container);
-        table.setColumnHeader(PROP_ID, "ID");
-        table.setColumnHeader(PROP_NAME, "Product Name");
-        table.setColumnHeader(PROP_MODEL_NUMBER, "Model Number");
-        table.setSizeFull();
-        rootLayout.addComponent(table);
+        container.addContainerProperty(PROP_NAME, String.class, "", true, false);
+        container.addContainerProperty(PROP_MODEL_NUMBER, String.class, "", true, false);
+        grid.setContainerDataSource(container);
+        grid.getDefaultHeaderRow().getCell(PROP_ID).setHtml("<b>ID</b>");
+        grid.getDefaultHeaderRow().getCell(PROP_NAME).setText("Product Name");
+        grid.getDefaultHeaderRow().getCell(PROP_MODEL_NUMBER).setText("Model Number");
+        grid.setHeightMode(HeightMode.ROW);
+        grid.setHeightByRows(10d);
+        grid.setWidth("100%");
+        rootLayout.setMargin(true);
+        rootLayout.addComponent(grid);
 
         this.productProvider = productProvider;
     }
@@ -63,11 +67,18 @@ public class DataViewImpl implements DataView, View, QueryFactory
     @Override
     public Query constructQuery(final QueryDefinition queryDefinition)
     {
-        return new QueryImpl();
+        return new QueryImpl(queryDefinition);
     }
 
     private class QueryImpl implements Query
     {
+        final QueryDefinition queryDefinition;
+
+        public QueryImpl(final QueryDefinition queryDefinition)
+        {
+            this.queryDefinition = queryDefinition;
+        }
+
         @Override
         public int size()
         {
@@ -77,7 +88,15 @@ public class DataViewImpl implements DataView, View, QueryFactory
         @Override
         public List<Item> loadItems(int startIndex, int count)
         {
-            final List<Product> productList = productProvider.loadItems(startIndex, count);
+            final String sortBy = queryDefinition.getSortPropertyIds().length > 0
+                    ? (String)queryDefinition.getSortPropertyIds()[0]
+                    : "";
+            final boolean ascending = queryDefinition.getSortPropertyAscendingStates().length > 0
+                    && (boolean) queryDefinition.getSortPropertyAscendingStates()[0];
+
+            final List<Product> productList = productProvider.loadItems(startIndex, count,
+                    sortBy,
+                    ascending);
             final List<Item> resList = new ArrayList<>(productList.size());
             for (Product product : productList) {
                 resList.add(obtainItemFromBean(product));

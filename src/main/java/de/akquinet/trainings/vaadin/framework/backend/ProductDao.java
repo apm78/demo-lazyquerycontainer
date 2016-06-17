@@ -7,7 +7,8 @@ import java.util.List;
  */
 public interface ProductDao
 {
-    List<Product> getProducts(int startIndex, int maxCount);
+    List<Product> getProducts(int startIndex, int maxCount,
+                              final String sortBy, final boolean ascending);
 
     int getProductCount();
 }

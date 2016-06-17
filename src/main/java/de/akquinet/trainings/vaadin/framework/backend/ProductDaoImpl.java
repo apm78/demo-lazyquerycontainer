@@ -18,7 +18,8 @@ public class ProductDaoImpl implements ProductDao
     };
 
     @Override
-    public List<Product> getProducts(final int startIndex, final int maxCount)
+    public List<Product> getProducts(final int startIndex, final int maxCount,
+                                     final String sortBy, final boolean ascending)
     {
         if (startIndex < 0)
         {
@@ -36,8 +37,9 @@ public class ProductDaoImpl implements ProductDao
         final List<Product> result = new ArrayList<>(endIndex - startIndex);
         for (int i = startIndex; i < endIndex; ++i)
         {
-            final String productName = generateProductName(i);
-            result.add(new Product(i, productName, generateProductModelNumber(i, productName)));
+            int id = "id".equals(sortBy) && !ascending ? PRODUCTS_COUNT - (i+1) : i;
+            final String productName = generateProductName(id);
+            result.add(new Product(id, productName, generateProductModelNumber(id, productName)));
         }
 
         return result;
