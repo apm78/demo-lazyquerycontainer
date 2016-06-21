@@ -40,8 +40,8 @@ public class DataViewImpl implements DataView, View, QueryFactory
         container.addContainerProperty(PROP_MODEL_NUMBER, String.class, "", true, false);
         grid.setContainerDataSource(container);
         grid.getDefaultHeaderRow().getCell(PROP_ID).setHtml("<b>ID</b>");
-        grid.getDefaultHeaderRow().getCell(PROP_NAME).setText("Product Name");
-        grid.getDefaultHeaderRow().getCell(PROP_MODEL_NUMBER).setText("Model Number");
+        grid.getColumn(PROP_NAME).setHeaderCaption("ProductName");
+        grid.getColumn(PROP_MODEL_NUMBER).setHeaderCaption("Model Number");
         grid.setHeightMode(HeightMode.ROW);
         grid.setHeightByRows(10d);
         grid.setWidth("100%");

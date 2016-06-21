@@ -33,6 +33,9 @@ public class DemoLazyQueryContainerUI extends UI
     @Override
     protected void init(VaadinRequest vaadinRequest)
     {
+        Responsive.makeResponsive(this);
+        addStyleName(ValoTheme.UI_WITH_MENU);
+
         final HorizontalLayout layout = new HorizontalLayout();
         layout.setSizeFull();
         final Panel contentPanel = new Panel();
@@ -47,9 +50,6 @@ public class DemoLazyQueryContainerUI extends UI
         getNavigator().addView(HomeViewImpl.VIEW_NAME, homeView);
         getNavigator().addView(DataViewImpl.VIEW_NAME, new DataViewImpl(new DataPresenterImpl()));
         getNavigator().setErrorView(homeView);
-
-        Responsive.makeResponsive(this);
-        addStyleName(ValoTheme.UI_WITH_MENU);
     }
 
     private Component createNavigation(){
