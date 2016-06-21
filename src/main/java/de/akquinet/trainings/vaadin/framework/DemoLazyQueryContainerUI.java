@@ -3,11 +3,13 @@ package de.akquinet.trainings.vaadin.framework;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.navigator.Navigator;
+import com.vaadin.cdi.CDIUI;
+import com.vaadin.cdi.CDIViewProvider;
+import com.vaadin.cdi.server.VaadinCDIServlet;
+import com.vaadin.navigator.*;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -17,19 +19,23 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
-import de.akquinet.trainings.vaadin.framework.views.data.DataPresenterImpl;
 import de.akquinet.trainings.vaadin.framework.views.data.DataViewImpl;
 import de.akquinet.trainings.vaadin.framework.views.home.HomeViewImpl;
 
+import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 
 /**
  * @author Axel Meier, akquinet engineering GmbH
  */
+@CDIUI("")
 @Theme("demotheme")
 @PreserveOnRefresh
 public class DemoLazyQueryContainerUI extends UI
 {
+    @Inject
+    private CDIViewProvider viewProvider;
+
     @Override
     protected void init(VaadinRequest vaadinRequest)
     {
@@ -46,10 +52,7 @@ public class DemoLazyQueryContainerUI extends UI
         setContent(layout);
 
         setNavigator(new Navigator(this, new CustomViewDisplay(contentPanel)));
-        final com.vaadin.navigator.View homeView = new HomeViewImpl();
-        getNavigator().addView(HomeViewImpl.VIEW_NAME, homeView);
-        getNavigator().addView(DataViewImpl.VIEW_NAME, new DataViewImpl(new DataPresenterImpl()));
-        getNavigator().setErrorView(homeView);
+        getNavigator().addProvider(viewProvider);
     }
 
     private Component createNavigation(){
@@ -82,7 +85,7 @@ public class DemoLazyQueryContainerUI extends UI
 
     @WebServlet(urlPatterns = "/*", name = "DemoLazyQueryContainerUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = DemoLazyQueryContainerUI.class, productionMode = false)
-    public static class DemoLazyQueryContainerUIServlet extends VaadinServlet
+    public static class DemoLazyQueryContainerUIServlet extends VaadinCDIServlet
     {
     }
 }

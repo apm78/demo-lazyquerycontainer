@@ -1,5 +1,6 @@
 package de.akquinet.trainings.vaadin.framework.views.data;
 
+import com.vaadin.cdi.CDIView;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
@@ -13,12 +14,14 @@ import org.vaadin.addons.lazyquerycontainer.Query;
 import org.vaadin.addons.lazyquerycontainer.QueryDefinition;
 import org.vaadin.addons.lazyquerycontainer.QueryFactory;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Axel Meier, akquinet engineering GmbH
  */
+@CDIView(DataViewImpl.VIEW_NAME)
 public class DataViewImpl implements DataView, View, QueryFactory
 {
     public final static String VIEW_NAME = "data";
@@ -29,9 +32,11 @@ public class DataViewImpl implements DataView, View, QueryFactory
     private final static int BATCH_SIZE = 50;
 
     private final VerticalLayout rootLayout = new VerticalLayout();
-    private final ProductProvider productProvider;
 
-    public DataViewImpl(final ProductProvider productProvider)
+    @Inject
+    private ProductProvider productProvider;
+
+    public DataViewImpl()
     {
         final Grid grid = new Grid("Product List");
         final LazyQueryContainer container = new LazyQueryContainer(this, PROP_ID, BATCH_SIZE, false);
@@ -47,10 +52,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
         grid.setWidth("100%");
         rootLayout.setMargin(true);
         rootLayout.addComponent(grid);
-
-        this.productProvider = productProvider;
     }
-
 
     @Override
     public <C> C getComponent(final Class<C> type)
@@ -92,7 +94,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
                     ? (String)queryDefinition.getSortPropertyIds()[0]
                     : "";
             final boolean ascending = queryDefinition.getSortPropertyAscendingStates().length > 0
-                    && (boolean) queryDefinition.getSortPropertyAscendingStates()[0];
+                    && queryDefinition.getSortPropertyAscendingStates()[0];
 
             final List<Product> productList = productProvider.loadItems(startIndex, count,
                     sortBy,
