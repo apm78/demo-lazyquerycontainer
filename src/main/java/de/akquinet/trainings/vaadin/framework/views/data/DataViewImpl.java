@@ -24,12 +24,12 @@ import java.util.List;
 @CDIView(DataViewImpl.VIEW_NAME)
 public class DataViewImpl implements DataView, View, QueryFactory
 {
-    public final static String VIEW_NAME = "data";
+    public static final String VIEW_NAME = "data";
 
-    private final static String PROP_ID = "id";
-    private final static String PROP_NAME = "name";
-    private final static String PROP_MODEL_NUMBER = "modelNumber";
-    private final static int BATCH_SIZE = 50;
+    private static final String PROP_ID = "id";
+    private static final String PROP_NAME = "name";
+    private static final String PROP_MODEL_NUMBER = "modelNumber";
+    private static final int BATCH_SIZE = 50;
 
     private final VerticalLayout rootLayout = new VerticalLayout();
 
@@ -48,7 +48,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
         grid.getColumn(PROP_NAME).setHeaderCaption("ProductName");
         grid.getColumn(PROP_MODEL_NUMBER).setHeaderCaption("Model Number");
         grid.setHeightMode(HeightMode.ROW);
-        grid.setHeightByRows(10d);
+        grid.setHeightByRows(10.0d);
         grid.setWidth("100%");
         rootLayout.setMargin(true);
         rootLayout.addComponent(grid);
@@ -88,7 +88,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
         }
 
         @Override
-        public List<Item> loadItems(int startIndex, int count)
+        public List<Item> loadItems(final int startIndex, final int count)
         {
             final String sortBy = queryDefinition.getSortPropertyIds().length > 0
                     ? (String)queryDefinition.getSortPropertyIds()[0]
@@ -100,7 +100,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
                     sortBy,
                     ascending);
             final List<Item> resList = new ArrayList<>(productList.size());
-            for (Product product : productList) {
+            for (final Product product : productList) {
                 resList.add(obtainItemFromBean(product));
             }
             return resList;
@@ -124,7 +124,7 @@ public class DataViewImpl implements DataView, View, QueryFactory
         }
 
         @Override
-        public void saveItems(List<Item> addedItems, List<Item> modifiedItems, List<Item> removedItems)
+        public void saveItems(final List<Item> addedItems, final List<Item> modifiedItems, final List<Item> removedItems)
         {
             throw new UnsupportedOperationException();
         }
